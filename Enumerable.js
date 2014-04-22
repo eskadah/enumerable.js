@@ -26,17 +26,20 @@ function Enum(array) {
     var cycle = function(element) {
         if (arguments[1]) {
             var ref = copy(arguments[1]);
+            var arr = copy(ref);
         } else {
             var ref = copy(_ary);
+            var arr = copy(ref);
         }
         var result = [];
-        for (var i = 0; i <= this.length; i++) {
-            ref.splice(_ary.length - i, 0, element);
+        for (var i = 0; i <= ref.length; i++) {
+            ref.splice(arr.length - i, 0, element);
             result.push(copy(ref));
-            ref = copy(_ary);
+            ref = copy(arr);
         }
         return result;
     }; // end cycle
+
 
     //this function checks to see if an element is contained within a collection
     var contains = function(arr, element) {
@@ -62,6 +65,19 @@ function Enum(array) {
         }
         return uniq;
     } //end unique
+
+
+    // this function calculates the factorial of a given number
+
+        function factorial(n) {
+            if (n == 1) {
+                return 1;
+            } else {
+                return n * factorial(n - 1);
+            }
+        }
+
+        // this function returns all possible arrangements of an array's elements
 
     var _permutation = function(arr) {
         if (Array.isArray(arr)) {
