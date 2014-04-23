@@ -110,6 +110,19 @@ function Enum(array) {
         return;
     } //end _permutation
 
+
+
+    var arrayCache = function(arr) {
+        var x = {};
+        arr.forEach(function(n, i) {
+            if (!x[n]) x[n] = 1;
+            else {
+                x[n] += 1;
+            }
+        });
+        return x;
+    };
+
     /* private utility functions end */
 
 
@@ -158,24 +171,24 @@ function Enum(array) {
 
 
     // setting up the cache for the count method; will remove public access to the cache in final version
-    this.getCountarr = function() {
-        if (this.countarr) {
-            return this.countarr;
+    this.getCache = function() {
+        if (this.cache) {
+            return this.cache;
         } else {
-            this.countarr = {};
-            return this.countarr;
+            this.cache = {};
+            return this.cache;
         }
     };
-    this.countarr = this.getCountarr();
+    this.cache = this.getCache();
 
     //this method returns the number of occurences of a given element
 
     this.count = function(e) {
-        if (Object.keys(this.getCountarr()).length > 0) {
+        if (Object.keys(this.getCache()).length > 0) {
 
-            return this.countarr[e];
+            return this.cache[e];
         }
-        if (contains(e)) {
+        if (contains(_ary, e)) {
             var x = {};
             _ary.forEach(function(n, i) {
                 if (!x[n]) x[n] = 1;
@@ -183,8 +196,8 @@ function Enum(array) {
                     x[n] += 1;
                 }
             });
-            this.countarr = x;
-            return this.countarr[e];
+            this.cache = x;
+            return this.cache[e];
         }
         return;
     };
@@ -214,5 +227,93 @@ function Enum(array) {
         }
         return _shuffle.pop(0, 1);
     }
-    //TODO: sample and shuffle methods
+
+    // this function returns the first n elements of the internal array
+
+    this.first = function(n) {
+        if (arguments.length > 0) {
+            return (_ary.slice(0, n));
+        }
+        return _ary[0];
+    };
+
+    // this function returns the last n elements of the internal array
+
+    this.last = function(n) {
+        if (arguments.length > 0) {
+            return (_ary.slice(-n, _ary.length - 1).concat([_ary[_ary.length - 1]]));
+        }
+
+        return _ary[_ary.length - 1];
+    };
+
+    // this function takes a function as an argument. This function argument should ideally return a boolean value.
+    // the function returns an array consisting of two array elements - the first array element contains all elements within
+    //the internal array that return `true` for the input argument function; the second array element contains elements that return
+    // `false` for the input argument function.
+
+
+    this.partition = function(f) {
+        if (arguments[0] instanceof Function) {
+            var temp = [
+                [],
+                []
+            ];
+            _ary.forEach(function(n) {
+
+                if (f(n)) {
+                    temp[0].push(n);
+                } else {
+                    temp[1].push(n);
+                }
+
+            });
+
+        }
+        return temp;
+    }
+
+    this.intersection = function(arr) {
+
+        var iter = _ary.length > arr.length ? copy(arr) : copy(_ary);
+        var other = _ary.length < arr.length ? copy(arr) : copy(_ary);
+
+        var temp = [];
+        for (var i = 0; i < other.length; i++) {
+            if (contains(iter, other[i])) {
+                temp.push(other[i]);
+            } else {
+                continue;
+            }
+        };
+        return temp;
+
+    } // end intersection method
+
+
+
+    this.difference = function(arr) {
+        var iter = _ary.length > arr.length ? copy(arr) : copy(_ary);
+        var other = _ary.length < arr.length ? copy(arr) : copy(_ary);
+
+        var temp = [];
+        for (var i = 0; i < other.length; i++) {
+            if (contains(iter, other[i])) {
+                continue;
+            } else {
+                temp.push(other[i]);
+            }
+        };
+        return temp;
+    } // end difference method
+
+
+    this.union = function(arr) {
+        var temp = copy(_ary).concat(arr);
+        return unique(temp);
+    }
 } //end Enum Constructor
+
+var $$ = function(arr) {
+    return new Enum(arr)
+};
